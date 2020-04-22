@@ -1,0 +1,19 @@
+spring:
+  thymeleaf:
+    cache: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3307/answer?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    type: com.mchange.v2.c3p0.ComboPooledDataSource
+
+
+
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
+
+server:
+  port: 8086
+

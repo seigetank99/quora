@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>个人中心</title>
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" type="text/css">
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<div class="navbar navbar-default navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" style="font-size: 20px">UniQuery</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse nav-tabs">
+            <ul class="nav navbar-nav">
+                <li><a href="index.html">首页</a> </li>
+                <li><a href="community.html">社区</a> </li>
+                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">分类<b class="caret"></b></a>
+                    <ul class="dropdown-menu" style="overflow: visible">
+                        <li><a href="/category?id=1">学术</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=2">体育</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=3">情感</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=4">生活</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=5">娱乐</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=6">科技</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=7">文化</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=7">新闻</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search" method="get" th:action="@{/search}">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search" name="keyword">
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-sub pull-right">
+                <li><a href="register.html">注册</a> </li>
+                <li><a href="login.html" th:text="${session.user} != null? '用户名:'+${session.user.getUname()} :'登录' "></a></li>
+                <li><img th:src="${session.user.getProfile()} != null? ${session.user.getProfile()}:'/images/default.jpg'" alt="图片加载失败" style="width: 40px;height:40px;margin-top: 5px;margin-left: 20px" class="img-rounded"></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+            <div style="height: 200px;" class="table-bordered">
+                <div style="float:left;"><img th:src="${user.getProfile()} != null? ${session.user.getProfile()}:'/images/default.jpg'" style="width: 150px;height: 150px"></div>
+                <div style="float:none;margin-left: 180px;margin-top:95px;width: 150px;height: 70px"><h4 th:text="${user.getUname()}"></h4><p><button class="btn-default img-rounded" style="color:#bdbdbd" data-container="body" data-toggle="popover" data-placement="bottom" th:profession="${user.getProfession()}" th:age="${user.getAge()}" th:gender="${user.getGender()}" th:email="${user.getEmail()}" th:sign="${user.getSignature()}">&emsp;查看详细资料&emsp;</button></p></div>
+                <div style="float: right;margin-top: -40px;margin-right: 20px"><button class="btn-default img-rounded follow" style="color:#bdbdbd;" th:if="${!myFollowers.contains(user.getUserid())}" th:followerID="${session.user.getUserid()}" th:followedID="${user.getUserid()}">关注ta</button></div>
+                <div style="float: right;margin-top: -40px;margin-right: 20px"><button class="btn-default img-rounded" style="color:#bdbdbd;" th:if="${myFollowers.contains(user.getUserid())}" disabled="disabled">已关注</button></div>
+            </div>
+            <ul id="myTab" class="nav nav-tabs">
+                <li class="active">
+                    <a href="#answer" data-toggle="tab">回答</a>
+                </li>
+                <li>
+                    <a href="#question" data-toggle="tab">提问</a>
+                </li>
+                <li>
+                    <a href="#collection" data-toggle="tab">收藏</a>
+                </li>
+                <li>
+                    <a href="#follows" data-toggle="tab">关注</a>
+                </li>
+            </ul>
+            <div id="myTabContent" class="tab-content">
+                <div class="tab-pane fade in active" id="answer">
+                    <div class="panel panel-default" th:each="map:${mapList}">
+                        <div class="panel-heading">
+                            <a th:href="@{/question(qid=${map['questionid']})}" style="text-decoration: none"><span th:text="${map['title']}"></span></a>
+                        </div>
+                        <div class="panel-body">
+                            <span th:text="${map['answer']['authorname']}+':'" th:name="${session.user.getUserid()}"></span>
+                            <span th:text="${map['answer']['content']}" th:name="${map['answer']['answerid']}"></span><a th:href="@{/question(qid=${map['questionid']})}" class="pull-right" style="text-decoration: none">阅读全文&raquo;</a>
+                        </div>
+                        <div class="panel-footer">
+                            <div>
+                                回答数：<span th:text="${map['answercount']}"></span>
+                                <button class="btn-default agree">赞成：<span th:text="${map['answer']['agreecount']}"></span></button>
+                                <button class="btn-default disagree">反对：<span th:text="${map['answer']['disagreecount']}"></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="question">
+                    <div class="panel panel-default" style="margin-top: 20px" th:each="question:${myQuestionList}">
+                        <div class="panel-body" th:text="${question.getTitle()}">
+                        </div>
+                        <div class="panel-footer">
+                            <div>
+                                回答数：<span th:text="${question.getAnswercount()}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="collection">
+                    <div class="panel panel-default" th:each="map:${interestedList}">
+                        <div class="panel-heading" th:if="${map['answer']['authorname']}!=null">
+                            <a th:href="@{/question(qid=${map['questionid']})}" style="text-decoration: none"><span th:text="${map['title']}"></span></a>
+                        </div>
+                        <div class="panel-heading" th:if="${map['answer']['authorname']}==null">
+                            <a th:href="@{/emptyQuestion(qid=${map['questionid']})}" style="text-decoration: none"><span th:text="${map['title']}"></span></a>
+                        </div>
+                        <div class="panel-body" th:if="${map['answer']['authorname']}!=null">
+                            <span th:text="${map['answer']['authorname']}+':'" th:name="${session.user.getUserid()}"></span>
+                            <span th:text="${map['answer']['content']}" th:name="${map['answer']['answerid']}"></span><a th:href="@{/question(qid=${map['questionid']})}" class="pull-right" style="text-decoration: none">阅读全文&raquo;</a>
+                        </div>
+                        <div class="panel-body" th:if="${map['answer']['authorname']}==null">
+                            <span>暂无回答</span>
+                        </div>
+                        <div class="panel-footer" th:if="${map['answer']['authorname']}!=null">
+                            <div>
+                                回答数：<span th:text="${map['answercount']}"></span>
+                                <button class="btn-default agree">赞成：<span th:text="${map['answer']['agreecount']}"></span></button>
+                                <button class="btn-default disagree">反对：<span th:text="${map['answer']['disagreecount']}"></span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="follows">
+                    <div class="panel panel-default" style="margin-top: 20px" th:each="follower:${followerList}">
+                        <div class="panel-body">
+                            <div style="float: left"><img th:src="${follower.getProfile()} != null? ${follower.getProfile()}:'/images/default.jpg'" style="width: 60px;height: 60px"></div>
+                            <div style="float: none">
+                                <p><b th:text="${follower.getUname()}"></b></p>
+                                <p th:text="${follower.getSignature()}!=null?${follower.getSignature()}:'未设置'"></p>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <p>回答<span th:text="${follower.getAnswercount()}"></span>&emsp;提问<span th:text="${follower.getQuestioncount()}"></span>&emsp;关注者<span th:text="${follower.getFollowercount()}"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="table-bordered"><div style="text-align: center;line-height: 50px"><b>创作者中心</b>&emsp;&emsp;&emsp;&emsp;&emsp;<a>去开通</a>&raquo;</div></div>
+            <div class="table-bordered" style="margin-top: 20px"><div style="width: 50%;line-height:30px;display: inline-block;text-align: center"><p>关注了</p><p><b th:text="${followerList.size()}"></b></p></div><div style="width: 50%;line-height: 30px;display: inline-block;text-align: center"><p>关注者</p><p><b th:text="${followedList.size()}"></b></p></div></div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        var profession=$("[data-toggle='popover']").attr('profession');
+        if (profession==null||profession==""){
+            profession="未设置";
+        }
+        var age=$("[data-toggle='popover']").attr('age');
+        if (age==null||profession==""){
+            age="未设置";
+        }
+        var gender=$("[data-toggle='popover']").attr('gender');
+        if (gender==null||profession==""){
+            gender="未设置";
+        }
+        var sign=$("[data-toggle='popover']").attr('sign');
+        if (sign==null||profession==""){
+            sign="未设置";
+        }
+        var email=$("[data-toggle='popover']").attr('email');
+        if (email==null||profession==""){
+            email="未设置";
+        }
+        $("[data-toggle='popover']").popover({
+            html:true,
+            title:'详细资料',
+            content:"<div><p><span>职业:"+profession+"</span></p><p>年龄:"+age+"</p><p>性别:"+gender+"</p><p>邮箱:"+email+"</p><p>个性签名："+sign+"</p></div>",
+        });
+        $(".follow").click(function () {
+            $.ajax({
+                type: "GET",
+                dataType: "text",
+                url: "/follow" ,
+                data: {"followerID":$(this).attr('followerID'),"followedID":$(this).attr('followedID')},
+                success: function (result) {
+                    if (result == "1") {
+                        alert("done!");
+                        window.location.reload();
+                    }
+                },
+                error : function() {
+                    alert("error！");
+                }
+            })
+        })
+    })
+</script>
+
+</body>
+</html>

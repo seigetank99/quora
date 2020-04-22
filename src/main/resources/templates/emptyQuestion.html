@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>UniQuery</title>
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" type="text/css">
+    <style type="text/css">
+        table tr td{
+            line-height: 50px;
+            text-align: center;
+            width: 100px;
+        }
+        .cutline{
+            vertical-align:middle; display:inline-block;
+        }
+    </style>
+</head>
+<div class="navbar navbar-default navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" style="font-size: 20px">UniQuery</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse nav-tabs">
+            <ul class="nav navbar-nav">
+                <li><a href="index.html">首页</a> </li>
+                <li><a href="community.html">社区</a> </li>
+                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">分类<b class="caret"></b></a>
+                    <ul class="dropdown-menu" style="overflow: visible">
+                        <li><a href="/category?id=1">学术</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=2">体育</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=3">情感</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=4">生活</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=5">娱乐</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=6">科技</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=7">文化</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/category?id=7">新闻</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search" method="get" th:action="@{/search}">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search" name="keyword">
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-sub pull-right">
+                <li><a href="register.html">注册</a> </li>
+                <li><a href="login.html" th:text="${session.user} != null? '用户名:'+${session.user.getUname()} :'登录' "></a></li>
+                <li><img th:src="${session.user.getProfile()} != null? ${session.user.getProfile()}:'/images/default.jpg'" alt="图片加载失败" style="width: 40px;height:40px;margin-top: 5px;margin-left: 20px" class="img-rounded"></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+
+    <div class="row">
+        <div class="row col-md-12">
+            <div style="margin-bottom: 20px">
+                <h3 th:text="${question.getTitle()}"></h3>
+                <tr>
+                    <td><button class="btn-default img-rounded collect" style="color:#bdbdbd;" th:userid="${session.user.getUserid()}" th:questionid="${question.getQuestionid()}">&emsp;关注问题&emsp;</button></td>
+                    <td><button class="btn-default img-rounded" style="color:#bdbdbd;" data-toggle="modal" data-target="#myModal">&emsp;写回答&emsp;</button></td>
+                    <td><button class="btn-default img-rounded" style="color:#bdbdbd;">&emsp;共0条回答&emsp;</button></td>
+                    <td><button class="btn-default img-rounded" style="color:#bdbdbd;">&emsp;分享&emsp;</button></td>
+                    <td><button class="btn-default img-rounded" style="color:#bdbdbd;">&emsp;举报&emsp;</button></td>
+                </tr>
+            </div>
+        </div>
+        <div class="col-md-9 table-bordered img-rounded">
+            <h2>暂无回答</h2>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <span>个人中心</span>
+                    <span style="float: right">私信(99)</span>
+                </div>
+            </div>
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    问问大家
+                </div>
+                <div class="panel-body">
+                    <table>
+                        <tr><td>提问</td><td>回答</td><td>收藏</td></tr>
+                        <tr><td>私信</td><td>历史</td><td>关注</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    校园生活
+                </div>
+                <div class="panel-body">
+                    <table>
+                        <tr><td>找人</td><td>求助</td><td>卖二手</td></tr>
+                        <tr><td>寻伙伴</td><td>公告栏</td><td>表白墙</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div>
+                    <div style="float:left;width:40px">
+                        <img th:src="${session.user.getProfile()} != null? ${session.user.getProfile()}:'/images/default.jpg'" alt="图片加载失败" style="width: 40px;height:40px">
+                    </div>
+                    <div style="float: right;margin-right: 20px">
+                        <input type="checkbox" id="isAnonymous">使用匿名身份回答
+                    </div>
+                    <div style="float:none;">
+                        <div style="margin-left: 55px"><b th:text="${session.user.getUname()}"></b><br/><span th:text="${session.user.getSignature()} !=null? ${session.user.getSignature()}:'未设置签名' "></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="editor">
+                    <p>输入回答</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="submit" th:questionid="${question.getQuestionid()}" th:userid="${session.user.getUserid()}" th:authorname="${session.user.getUname()}">提交回答</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function(){
+        $('.collect').click(function(){
+            $.ajax({
+                type:"Get",
+                dataType:"text",
+                url:"/addCollect",
+                data:{"questionID":$(this).attr('questionid'),"userID":$(this).attr('userid')},
+                success: function (result) {
+                    if (result == "1") {
+                        alert("done!")
+                        window.location.reload();
+                    }else if(result =="2") {
+                        alert("you already done this!")
+                    };
+                },
+                error : function() {
+                    alert("error！");
+                }
+            })
+        })
+    })
+</script>
+<script type="text/javascript" th:src="@{../wangEditor/Editor.min.js}"></script>
+<script type="text/javascript">
+    var E = window.wangEditor
+    var editor = new E('#editor')
+    editor.create()
+    $('#submit').click(function(){
+        var data="1";
+        if(($(this).parent().parent().find('[type=checkbox]').prop("checked"))){
+            data="0";
+        }
+        var content=editor.txt.text();
+        $.ajax({
+            type:"Get",
+            dataType:"text",
+            url:"/answerQuestion",
+            data:{"questionID":$(this).attr('questionid'),"userID":$(this).attr('userid'),"content":content,"isAnoynomous":data,"authorname":$(this).attr('authorname')},
+            success: function (result) {
+                if (result == "1") {
+                    alert("submission succeed!")
+                    window.location.href="index.html";
+                };
+            },
+            error : function() {
+                alert("error！");
+            }
+        })
+    })
+</script>
+</body>
+</html>

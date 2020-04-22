@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Uniquery</title>
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrapvalidator/0.5.2/js/bootstrapValidator.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrapvalidator/0.5.2/css/bootstrapValidator.css}" type="text/css">
+    <style type="text/css">
+        .row-custom {
+            width: 420px;
+            height: 60px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row" style="margin-top: 15%">
+        <div class="col text-center">
+            <h4 class="text-muted font-weight-light mt-1">Sign in to Uniquery</h4>
+        </div>
+    </div>
+    <div class="row row-custom">
+        <div class="col">
+            <div class="bg-white p-4 mt-3 border rounded">
+                <form onsubmit="return false" action="##" method="post">
+                    <div class="form-group">
+                        <em style="color: red;">*</em><label for="usernameInput" class="text-dark">Username or phone number</label>
+                        <input type="text" class="form-control form-control-sm" id="usernameInput" name="username" placeholder="Enter username or email">
+                    </div>
+                    <div class="form-group">
+                        <em style="color: red;">*</em><label for="passwordInput" class="text-dark d-block">Password
+                            <a class="text-primary float-right">Forgot password?</a>
+                        </label>
+                        <input type="password" class="form-control form-control-sm" id="passwordInput" placeholder="Password" name="password">
+                    </div>
+                    <div class="form-group">
+                    <button type="submit" class="btn rounded-sm btn-primary-custom btn-block btn-sm text-white mt-4" style="background-color: aliceblue" onclick="login()"><b>Sign in</b></button>
+                    </div>
+                    <div>
+                        <span>New to Uniquery?</span>
+                        <a href="register.html"><b>Create an account.</b></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+        function login() {
+            $.ajax({
+                type: "POST",
+                dataType: "text",
+                url: "/login" ,
+                data: $('form').serialize(),
+                success: function (result) {
+                    if (result == "1") {
+                        alert("login in successfully!");
+                        window.location.href="index.html";
+                    }else if(result == "2"){
+                        alert("Unmatched username and password!");
+                        window.location.reload();
+                    };
+                },
+                error : function() {
+                    alert("error！");
+                }
+            });
+        };
+    $(function(){
+        $('form').bootstrapValidator({
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                username: {
+                    validators: {
+                        notEmpty: {
+                            message: 'The username is required and cannot be empty'
+                        }
+                    }
+                },
+                password: {
+                    validators: {
+                        notEmpty: {
+                            message: 'The password is required and cannot be empty'
+                        }
+                    }
+                }
+            }
+        });
+    })
+
+</script>
+</html>
